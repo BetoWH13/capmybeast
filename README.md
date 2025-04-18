@@ -28,3 +28,5 @@ To run locally:
 git clone https://github.com/BetoWH13/capmybeast.git
 cd capmybeast
 open index.html
+
+[![Buy Me A Coffee](https://img.shields.io/badge/☕-Buy%20Me%20a%20Coffee-yellow?style=flat)](https://buymeacoffee.com/betowh18)
