@@ -54,7 +54,15 @@
     <p>&copy; 2025 CapMyBeast. Built with ❤️ and SVGs.</p>
   </footer>
 
-  <script src="app.js"></script>
+  <script src="app.js"></script> 
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log("✅ Service Worker registered"))
+      .catch(err => console.error("SW registration failed", err));
+  }
+</script>
+
 </body>
 </html>
 
