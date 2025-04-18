@@ -35,7 +35,10 @@ body {
   justify-content: center;
 }
 
-#log-spend {
+#log-spend,
+#set-cap-btn,
+#change-beast-btn {
+  margin: 0.25rem;
   padding: 0.5rem 1rem;
   background: #333;
   color: white;
