@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CapMyBeast</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <div id="onboard">
+    <h1>Pick Your Beast</h1>
+    <div id="beast-choices"></div>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <h1>Your Weekly Cap: $<span id="cap-value">0</span></h1>
+    <div id="beast-bar-container"></div>
+    <button id="log-spend">Log This Week’s Spend</button>
+    <div id="streak">Streak: <span id="streak-count">0</span></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
