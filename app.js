@@ -1,17 +1,16 @@
-// CapMyBeast - Improved app.js with robust validation, error handling, accessibility, and UI/UX polish
+// app.js — CapMyBeast PWA with robust validation, accessibility, reaction emojis & emotion states
 
-const beastsEl = document.getElementById('beast-choices');
-const capDisplay = document.getElementById('cap-value');
-const dashEl = document.getElementById('dashboard');
-const onboardEl = document.getElementById('onboard');
-let beasts = [];
+// DOM references
+const beastsEl    = getEl('beast-choices');
+const capDisplay  = getEl('cap-value');
+const dashEl      = getEl('dashboard');
+const onboardEl   = getEl('onboard');
+let beasts        = [];
 
 // Utility: Safe DOM lookup
 function getEl(id) {
   const el = document.getElementById(id);
-  if (!el) {
-    console.error(`Element with id "${id}" not found.`);
-  }
+  if (!el) console.error(`Element with id "${id}" not found.`);
   return el;
 }
 
@@ -29,7 +28,7 @@ fetch('beasts.json')
       beastsEl?.appendChild(btn);
     });
 
-    // Auto-init if beast was already picked
+    // Auto‑init if a Beast was already selected
     if (localStorage.getItem('beastId')) {
       onboardEl?.classList.add('hidden');
       dashEl?.classList.remove('hidden');
@@ -41,7 +40,7 @@ fetch('beasts.json')
     console.error("Error loading beasts.json:", err);
   });
 
-// Handle beast selection
+// Handle Beast selection
 function selectBeast(id) {
   localStorage.setItem('beastId', id);
   onboardEl?.classList.add('hidden');
@@ -49,9 +48,9 @@ function selectBeast(id) {
   initDashboard();
 }
 
-// Setup dashboard and beast bar
+// Initialize dashboard: week rollover, cap prompt, previous progress, streak
 function initDashboard() {
-  const weekId = getWeekId();
+  const weekId       = getWeekId();
   const lastUsedWeek = localStorage.getItem("currentWeekId");
 
   // New week detected?
@@ -64,8 +63,11 @@ function initDashboard() {
 
   localStorage.setItem("currentWeekId", weekId);
 
+  // Load saved data for this week
   const saved = localStorage.getItem(`week-${weekId}`);
-  let cap = saved ? JSON.parse(saved).cap : localStorage.getItem("weeklyCap");
+  let cap = saved
+    ? JSON.parse(saved).cap
+    : localStorage.getItem("weeklyCap");
 
   // Robust prompt for cap
   while (!cap || isNaN(cap) || Number(cap) <= 0) {
@@ -82,46 +84,75 @@ function initDashboard() {
   cap = Number(cap);
   localStorage.setItem("weeklyCap", cap);
 
+  // Update UI cap & streak
   if (capDisplay) capDisplay.textContent = cap;
   setStreakCount(getStreakCount());
 
-  // Render previous progress if available
+  // Render previous progress or empty bar
   if (saved) {
     const spent = JSON.parse(saved).spent || 0;
-    const pct = Math.min(100, Math.round((spent / cap) * 100));
+    const pct   = Math.min(100, Math.round((spent / cap) * 100));
     renderBeastBar(pct);
   } else {
     renderBeastBar(0);
   }
 }
 
-// Render beast with dynamic clip-path fill
+// Render the Beast SVG with clip‑path fill and emotion states
 function renderBeastBar(percent) {
-  const beastId = localStorage.getItem('beastId');
-  const beast = beasts.find(b => b.id === beastId);
+  const beastId  = localStorage.getItem('beastId');
+  const beast    = beasts.find(b => b.id === beastId);
   const container = getEl('beast-bar-container');
   if (!container || !beast) return;
+
   // Remove any existing reaction emoji
   const oldReaction = container.querySelector('.beast-reaction');
   if (oldReaction) oldReaction.remove();
 
   // Clamp percent
-  percent = Math.max(0, Math.min(100, percent));
+  const pct = Math.max(0, Math.min(100, percent));
 
+  // Inject the clipped SVG
   container.innerHTML = `
-    <svg viewBox="0 0 100 100" class="beast-svg" width="100" height="100" aria-label="${beast.label}">
+    <svg
+      id="beast-svg"
+      viewBox="0 0 100 100"
+      class="beast-svg"
+      width="100"
+      height="100"
+      aria-label="${beast.label}"
+    >
       <defs>
-        <clipPath id="barClip"><rect y="${100 - percent}" width="100" height="${percent}"></rect></clipPath>
+        <clipPath id="barClip">
+          <rect y="${100 - pct}" width="100" height="${pct}"></rect>
+        </clipPath>
       </defs>
-      <image clip-path="url(#barClip)" href="assets/beasts/${beast.file}" width="100" height="100" alt="${beast.label}"/>
-    </svg>`;
+      <image
+        clip-path="url(#barClip)"
+        href="assets/beasts/${beast.file}"
+        width="100"
+        height="100"
+        alt="${beast.label}"
+      />
+    </svg>
+  `;
+
+  // Apply emotion state class
+  const svgEl = getEl('beast-svg');
+  if (svgEl) {
+    svgEl.classList.remove('state-calm','state-anxious','state-furious');
+    if (pct <= 70)      svgEl.classList.add('state-calm');
+    else if (pct <= 90) svgEl.classList.add('state-anxious');
+    else                svgEl.classList.add('state-furious');
+  }
 }
 
-// Week ID logic
+// Compute week ID (Jan 1–based)
 function getWeekId() {
-  const now = new Date();
+  const now    = new Date();
   const oneJan = new Date(now.getFullYear(), 0, 1);
-  const week = Math.ceil((((now - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
+  const days   = Math.ceil((now - oneJan) / 86400000);
+  const week   = Math.ceil((days + oneJan.getDay() + 1) / 7);
   return `${now.getFullYear()}-W${week}`;
 }
 
@@ -129,14 +160,13 @@ function getWeekId() {
 function getStreakCount() {
   return parseInt(localStorage.getItem('streakCount')) || 0;
 }
-
 function setStreakCount(val) {
   localStorage.setItem('streakCount', val);
   const streakEl = getEl('streak-count');
   if (streakEl) streakEl.textContent = val;
 }
 
-// Log weekly spend with improved validation and feedback
+// Log‐spend button logic (validation, persistence, reactions, streak updates)
 const logSpendBtn = getEl('log-spend');
 if (logSpendBtn) {
   logSpendBtn.onclick = () => {
@@ -145,25 +175,28 @@ if (logSpendBtn) {
       alert("Weekly cap not set. Please reload and set your cap.");
       return;
     }
+
     let spent = prompt(`You set $${cap}. How much did you spend?`);
-    if (spent === null) return; // User cancelled
+    if (spent === null) return;  // user cancelled
     spent = spent.trim();
-    if (!spent || isNaN(spent) || Number(spent) <= 0) {
+    if (!spent || isNaN(spent) || Number(spent) < 0) {
       alert("Please enter a valid number.");
       return;
     }
     spent = Number(spent);
 
+    // Render bar & persist data
     const pct = Math.min(100, Math.round((spent / cap) * 100));
     renderBeastBar(pct);
 
     const weekId = getWeekId();
     localStorage.setItem(`week-${weekId}`, JSON.stringify({ cap, spent }));
 
+    // Streak logic
     const lastWeekId = localStorage.getItem("lastWeekId");
-    const streakCount = getStreakCount();
-
+    let streakCount  = getStreakCount();
     let streakMessage = "";
+
     if (spent <= cap) {
       if (lastWeekId && lastWeekId !== weekId) {
         setStreakCount(streakCount + 1);
@@ -181,30 +214,19 @@ if (logSpendBtn) {
 
     localStorage.setItem("lastWeekId", weekId);
 
-    // 🐲 Show beast reaction
-    const container = getEl("beast-bar-container");
+    // Show reaction emoji
+    const container = getEl('beast-bar-container');
     if (container) {
-      // Remove any existing reaction emoji
-      const oldReaction = container.querySelector('.beast-reaction');
-      if (oldReaction) oldReaction.remove();
-
-      const reaction = document.createElement("div");
-      reaction.className = "beast-reaction";
-      reaction.setAttribute('role', 'status');
-      reaction.setAttribute('aria-live', 'polite');
+      const old = container.querySelector('.beast-reaction');
+      if (old) old.remove();
+      const reaction = document.createElement('div');
+      reaction.className = 'beast-reaction';
+      reaction.setAttribute('role','status');
+      reaction.setAttribute('aria-live','polite');
       reaction.textContent = spent <= cap ? "😄" : "😞";
+      if (streakMessage) reaction.title = streakMessage;
       container.appendChild(reaction);
-
-      // Show streak message as tooltip
-      if (streakMessage) {
-        reaction.title = streakMessage;
-      }
-
-      setTimeout(() => {
-        reaction.remove();
-      }, 3000);
+      setTimeout(() => reaction.remove(), 3000);
     }
-    // Optionally, show a toast or alert for streak message
-    // if (streakMessage) alert(streakMessage);
   };
 }
