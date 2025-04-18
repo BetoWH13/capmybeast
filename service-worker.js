@@ -1,4 +1,5 @@
-// service-worker.js
+// service-worker.js for CapMyBeast - Offline Support
+
 const CACHE_NAME = 'capmybeast-v1';
 const ASSETS = [
   '/',
@@ -37,3 +38,4 @@ self.addEventListener('activate', (event) => {
     )
   );
 });
+
