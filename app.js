@@ -1,4 +1,4 @@
-// CapMyBeast - Full app.js with streak tracking and weekly spend logic
+// CapMyBeast - Full app.js with streak tracking, weekly rollover, and beast reaction polish
 
 const beastsEl = document.getElementById('beast-choices');
 const capDisplay = document.getElementById('cap-value');
@@ -37,13 +37,38 @@ function selectBeast(id) {
 // Setup dashboard and beast bar
 function initDashboard() {
   const weekId = getWeekId();
+  const lastUsedWeek = localStorage.getItem("currentWeekId");
+
+  // New week detected?
+  if (lastUsedWeek && lastUsedWeek !== weekId) {
+    console.log("⏭️ New week detected!");
+    localStorage.removeItem("weeklyCap");
+    localStorage.removeItem(`week-${lastUsedWeek}`);
+    renderBeastBar(0);
+  }
+
+  localStorage.setItem("currentWeekId", weekId);
+
   const saved = localStorage.getItem(`week-${weekId}`);
-  const cap = saved ? JSON.parse(saved).cap : prompt('Set your weekly spend cap:');
-  if (!cap || isNaN(cap) || cap <= 0) return alert("Please enter a valid number.");
-  localStorage.setItem('weeklyCap', cap);
+  let cap = saved ? JSON.parse(saved).cap : localStorage.getItem("weeklyCap");
+
+  if (!cap || isNaN(cap) || cap <= 0) {
+    cap = prompt("Set your weekly spend cap:");
+    if (!cap || isNaN(cap) || cap <= 0) return alert("Please enter a valid number.");
+    localStorage.setItem("weeklyCap", cap);
+  }
+
   capDisplay.textContent = cap;
-  renderBeastBar(0);
   setStreakCount(getStreakCount());
+
+  // Render previous progress if available
+  if (saved) {
+    const spent = JSON.parse(saved).spent || 0;
+    const pct = Math.min(100, Math.round((spent / cap) * 100));
+    renderBeastBar(pct);
+  } else {
+    renderBeastBar(0);
+  }
 }
 
 // Render beast with dynamic clip-path fill
@@ -104,6 +129,12 @@ document.getElementById('log-spend').onclick = () => {
   }
 
   localStorage.setItem("lastWeekId", weekId);
+
+  // 🐲 Show beast reaction
+  const reaction = document.createElement("div");
+  reaction.className = "beast-reaction";
+  reaction.textContent = spent <= cap ? "😄" : "😞";
+  document.getElementById("beast-bar-container").appendChild(reaction);
+
+  setTimeout(() => reaction.remove(), 3000);
 };
-
-
