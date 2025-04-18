@@ -5,3 +5,39 @@ body { font-family: sans-serif; margin: 1rem; background: #f5f5f5; }
 #beast-choices img { max-width: 100%; }
 #beast-bar-container { margin: 1rem 0; height: 200px; }
 #log-spend { padding: .5rem 1rem; background: #333; color: white; border: none; cursor: pointer; border-radius: 4px; }
+/* 1. Keyframes */
+@keyframes calm-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+@keyframes anxious-shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-2px); }
+  75%      { transform: translateX(2px); }
+}
+@keyframes furious-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.1); }
+}
+
+/* 2. Base SVG styling */
+.beast-svg {
+  width: 100px;
+  height: 100px;
+  transition: filter 0.3s ease, transform 0.3s ease;
+  transform-origin: center bottom;
+}
+
+/* 3. Emotion states */
+.beast-svg.state-calm {
+  filter: hue-rotate(120deg) saturate(0.8);
+  animation: calm-breathe 4s ease-in-out infinite;
+}
+.beast-svg.state-anxious {
+  filter: hue-rotate(30deg) saturate(1.2);
+  animation: anxious-shake 0.6s ease-in-out infinite;
+}
+.beast-svg.state-furious {
+  filter: hue-rotate(0deg) saturate(1.5) brightness(1.2);
+  animation: furious-pulse 1s ease-in-out infinite;
+}
