@@ -2,24 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CapMyBeast</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CapMyBeast – Weekly Spending Challenge with a Creature Companion</title>
+  <meta name="description" content="CapMyBeast is a gamified weekly spending tracker where your emotional beast reacts to your budget discipline. Set a weekly cap, log spending, and tame your beast. No login. No tracking. Just mindfulness + fun." />
+  <meta name="keywords" content="budgeting app, weekly spending tracker, emotional spending, gamified finance, PWA, cap my beast" />
   <link rel="stylesheet" href="style.css" />
   <link rel="manifest" href="manifest.json" />
 </head>
-<body>
-  <div id="onboard">
-    <h1>Pick Your Beast</h1>
-    <div id="beast-choices"></div>
-  </div>
 
-  <div id="dashboard" class="hidden">
-    <h1>Your Weekly Cap: $<span id="cap-value">0</span></h1>
-    <div id="beast-bar-container"></div>
+<body>
+  <!-- 💡 Intro + SEO Content Section -->
+  <section id="intro">
+    <h1>CapMyBeast</h1>
+    <p><strong>CapMyBeast</strong> is a minimalist, visual budgeting tool that helps you tame your emotional spending by setting a weekly spending cap. Choose a companion Beast and track your progress with a dynamic fill bar that shows how close you are to your limit.</p>
+    
+    <ul>
+      <li>🐉 Set your <strong>weekly budget cap</strong></li>
+      <li>📊 Log your spending once per week</li>
+      <li>💥 Your Beast reacts visually — happy if you're under, droopy if you overspend</li>
+      <li>🔥 Track your under-cap streaks over time</li>
+    </ul>
+
+    <p>This is a 100% offline-first, privacy-safe budgeting app — no logins, no syncing. Just you, your wallet, and your Beast.</p>
+  </section>
+
+  <!-- 🐉 Onboarding: Choose Your Beast -->
+  <section id="onboard">
+    <h2>Pick Your Beast</h2>
+    <p>Choose your companion. Each one reflects your emotional journey through the week.</p>
+    <div id="beast-choices" aria-label="Beast selection area"></div>
+  </section>
+
+  <!-- 📊 Dashboard -->
+  <section id="dashboard" class="hidden">
+    <h2>Your Weekly Spending Dashboard</h2>
+
+    <p>Cap this week: $<span id="cap-value">0</span></p>
+
+    <!-- Beast Fill Meter -->
+    <div id="beast-bar-container" aria-label="Beast progress bar visualization"></div>
+
     <button id="log-spend">Log This Week’s Spend</button>
-    <div id="streak">Streak: <span id="streak-count">0</span></div>
-  </div>
+
+    <!-- Streak Display -->
+    <p>Streak: <span id="streak-count">0</span> weeks under cap 🔥</p>
+  </section>
+
+  <!-- 📎 Footer Info for SEO + Context -->
+  <footer>
+    <p><strong>CapMyBeast</strong> is your weekly challenge to build mindful money habits in a fun, visual way. Perfect for Gen Z, minimalists, and anyone trying to feel better about money without spreadsheets.</p>
+    <p>&copy; 2025 CapMyBeast. Built with ❤️ and SVGs.</p>
+  </footer>
 
   <script src="app.js"></script>
 </body>
 </html>
+
