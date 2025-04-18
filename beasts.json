@@ -1,0 +1,7 @@
+[
+  { "id": "turtle",  "label": "Stoic Turtle",   "file": "beast-1.svg" },
+  { "id": "dragon",  "label": "Fiery Dragon",   "file": "beast-2.svg" },
+  { "id": "cloud",   "label": "Calm Cloud",     "file": "beast-3.svg" },
+  { "id": "phoenix", "label": "Rising Phoenix", "file": "beast-4.svg" },
+  { "id": "yeti",    "label": "Snowy Yeti",     "file": "beast-5.svg" }
+]
